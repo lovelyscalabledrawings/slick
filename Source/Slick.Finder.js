@@ -42,7 +42,7 @@ local.setDocument = function(document){
 
 	var root = document.documentElement,
 		rootUid = this.getUIDXML(root),
-		features = featuresCache[rootUid],
+		features = document.slickFeatures || featuresCache[rootUid],
 		feature;
 
 	if (features){
