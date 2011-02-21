@@ -4,6 +4,7 @@ name: Slick.Finder
 description: The new, superfast css selector engine.
 provides: Slick.Finder
 requires: Slick.Parser
+replaces: Core/Slick.Finder
 ...
 */
 
