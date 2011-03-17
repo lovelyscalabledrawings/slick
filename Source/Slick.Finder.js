@@ -569,6 +569,38 @@ local.matchNode = function(node, selector){
 	return false;
 };
 
+local.matchNodeR = function(node, selector){
+  if (this.isHTMLDocument && this.nativeMatchesSelector){
+		try {
+			return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
+		} catch(matchError) {}
+	}
+
+	var parsed = this.Slick.parse(selector);
+	if (!parsed) return true;
+	
+	parsed = parsed.reverse();
+	
+	var selector = {Slick: true, expressions: [], length: 0}
+  for (var i = 0, expression; expression = parsed.expressions[i]; i++) {
+    var first = expression[0];
+    if (local.matchSelector(node, first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
+      var length = expression.length;
+      if (length == 2) {
+        // simple selector
+        return true;
+      } else {  
+        var expressions = [];
+        selector.expressions.push(expressions);
+        selector.length++;
+        for (var j = 1; j < length - 1; j++) expressions.push(expression[j]);
+      }
+    } else return false;
+  }
+  return this.search(node, selector, null, true);
+}
+
+
 local.matchPseudo = function(node, name, argument){
 	var pseudoName = 'pseudo:' + name;
 	if (this[pseudoName]) return this[pseudoName](node, argument);
@@ -911,6 +943,13 @@ Slick.match = function(node, selector){
 	if (!selector || selector === node) return true;
 	local.setDocument(node);
 	return local.matchNode(node, selector);
+};
+
+Slick.matchR = function(node, selector){
+	if (!(node && selector)) return false;
+	if (!selector || selector === node) return true;
+	local.setDocument(node);
+	return local.matchNodeR(node, selector);
 };
 
 // Slick attribute accessor
