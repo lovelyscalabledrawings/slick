@@ -569,36 +569,26 @@ local.matchNode = function(node, selector){
 	return false;
 };
 
-local.matchNodeR = function(node, selector){
-  if (this.isHTMLDocument && this.nativeMatchesSelector){
-		try {
-			return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
-		} catch(matchError) {}
-	}
-
+var reSingularCombinator = /^\!?[>+^]$/; // "+", ">", "^"
+local.matchNodeR = function(node, selector, needle){
 	var parsed = this.Slick.parse(selector);
 	if (!parsed) return true;
-	
+
 	parsed = parsed.reverse();
-	
-	var selector = {Slick: true, expressions: [], length: 0}
-  for (var i = 0, expression; expression = parsed.expressions[i]; i++) {
-    var first = expression[0];
-    if (local.matchSelector(node, first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
-      var length = expression.length;
-      if (length == 2) {
-        // simple selector
-        return true;
-      } else {  
-        var expressions = [];
-        selector.expressions.push(expressions);
-        selector.length++;
-        for (var j = 1; j < length - 1; j++) expressions.push(expression[j]);
-      }
-    } else return false;
-  }
-  return this.search(node, selector, null, true);
-}
+	for (var i = 0, expression, expressions, built, length, multiple; expression = parsed.expressions[i]; i++) {
+		var first = expression[0];
+		if (local.matchSelector(node, first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
+			if ((length = expression.length) == 1) continue;
+			if (!built) built = {Slick: true, expressions: [], length: 0};
+			built.expressions.push(expressions  = []);
+			built.length++;
+			for (var j = 1; j < length; j++) expressions.push(expression[j]);
+			if (!multiple) multiple = !expression[expression.length - 1].combinator.match(reSingularCombinator);
+		} else return false;
+	}
+	var found = built ? this.search(node, built, null, !(multiple && needle)) : node;
+	return needle ? (multiple ? found.indexOf(needle) > -1 : found == needle) : !!found;
+};
 
 
 local.matchPseudo = function(node, name, argument){
@@ -945,11 +935,11 @@ Slick.match = function(node, selector){
 	return local.matchNode(node, selector);
 };
 
-Slick.matchR = function(node, selector){
+Slick.matchR = function(node, selector, needle){
 	if (!(node && selector)) return false;
 	if (!selector || selector === node) return true;
 	local.setDocument(node);
-	return local.matchNodeR(node, selector);
+	return local.matchNodeR(node, selector, needle);
 };
 
 // Slick attribute accessor
