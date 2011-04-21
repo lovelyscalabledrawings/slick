@@ -162,7 +162,6 @@ local.setDocument = function(document){
 		} catch(e){};
 
 		// native matchesSelector function
-
 		features.nativeMatchesSelector = root.matchesSelector || /*root.msMatchesSelector ||*/ root.mozMatchesSelector || root.webkitMatchesSelector;
 		if (features.nativeMatchesSelector) try {
 			// if matchesSelector trows errors on incorrect sintaxes we can use it
@@ -540,44 +539,20 @@ local.pushUID = function(node, tag, id, classes, attributes, pseudos){
 	}
 };
 
-local.matchNode = function(node, selector){
-	if (this.isHTMLDocument && this.nativeMatchesSelector){
-		try {
-			return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
-		} catch(matchError) {}
-	}
-	
-	var parsed = this.Slick.parse(selector);
-	if (!parsed) return true;
-
-	// simple (single) selectors
-	var expressions = parsed.expressions, reversedExpressions, simpleExpCounter = 0, i;
-	for (i = 0; (currentExpression = expressions[i]); i++){
-		if (currentExpression.length == 1){
-			var exp = currentExpression[0];
-			if (this.matchSelector(node, (this.isXMLDocument) ? exp.tag : exp.tag.toUpperCase(), exp.id, exp.classes, exp.attributes, exp.pseudos)) return true;
-			simpleExpCounter++;
-		}
-	}
-
-	if (simpleExpCounter == parsed.length) return false;
-
-	var nodes = this.search(this.document, parsed), item;
-	for (i = 0; item = nodes[i++];){
-		if (item === node) return true;
-	}
-	return false;
-};
-
 var reSingularCombinator = /^\!?[>+^]$/; // "+", ">", "^"
-local.matchNodeR = function(node, selector, needle){
+local.matchNode = function(node, selector, needle){
+  if (!needle && this.isHTMLDocument && this.nativeMatchesSelector){
+  	try {
+  		return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
+  	} catch(matchError) {}
+  }
 	var parsed = this.Slick.parse(selector);
 	if (!parsed) return true;
 
 	parsed = parsed.reverse();
 	for (var i = 0, expression, expressions, built, length, multiple; expression = parsed.expressions[i]; i++) {
 		var first = expression[0];
-		if (local.matchSelector(node, first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
+		if (local.matchSelector(node, (this.isXMLDocument) ? first.tag : first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
 			if ((length = expression.length) == 1) continue;
 			if (!built) built = {Slick: true, expressions: [], length: 0};
 			built.expressions.push(expressions  = []);
@@ -933,13 +908,6 @@ Slick.match = function(node, selector){
 	if (!selector || selector === node) return true;
 	local.setDocument(node);
 	return local.matchNode(node, selector);
-};
-
-Slick.matchR = function(node, selector, needle){
-	if (!(node && selector)) return false;
-	if (!selector || selector === node) return true;
-	local.setDocument(node);
-	return local.matchNodeR(node, selector, needle);
 };
 
 // Slick attribute accessor

@@ -1,0 +1,294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>deep match</title>
+  </head>
+  <body>
+    <applet code="nano" archive="../../benchmarkjs/nano.jar"></applet>
+    
+    <div id="head" class="foo">
+          <b class="foo">Foobaz</b>
+          <i class="baz">Foobar</i>
+          <b id="bar" class="baz"></b>
+        </div>
+        <!-- Here goes EXCESS DOM -->
+        <div id="wtf">
+          <b class="omg">Woot</b>
+          <a href="#" class="baz">Link</a>
+          <i id="uhm">I am excess</i>
+          <b>I am too</b>
+          <div id="wtf">
+            <b class="omg">Woot</b>
+            <a href="#" class="baz">Link</a>
+            <i id="uhm">I am excess</i>
+            <b>I am too</b>
+            <div id="wtf">
+              <b class="omg">Woot</b>
+              <a href="#" class="baz">Link</a>
+              <i id="uhm">I am excess</i>
+              <b>I am too</b>
+              <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+            </div>
+            <div id="wtf">
+              <b class="omg">Woot</b>
+              <a href="#" class="baz">Link</a>
+              <i id="uhm">I am excess</i>
+              <b>I am too</b>
+              <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+              <div id="wtf">
+                <b class="omg">Woot</b>
+                <a href="#" class="baz">Link</a>
+                <i id="uhm">I am excess</i>
+                <b>I am too</b>
+                <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                <div id="wtf">
+                  <b class="omg">Woot</b>
+                  <a href="#" class="baz">Link</a>
+                  <i id="uhm">I am excess</i>
+                  <b>I am too</b>
+                  <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                  <div id="wtf">
+                    <b class="omg">Woot</b>
+                    <a href="#" class="baz">Link</a>
+                    <i id="uhm">I am excess</i>
+                    <b>I am too</b>
+                    <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                    <div id="wtf">
+                      <b class="omg">Woot</b>
+                      <a href="#" class="baz">Link</a>
+                      <i id="uhm">I am excess</i>
+                      <b>I am too</b>
+                      <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+          </div>
+
+          <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+        </div>
+
+        <div id="wtf">
+          <b class="omg">Woot</b>
+          <a href="#" class="baz">Link</a>
+          <i id="uhm">I am excess</i>
+          <b>I am too</b>
+          <div id="wtf">
+            <b class="omg">Woot</b>
+            <a href="#" class="baz">Link</a>
+            <i id="uhm">I am excess</i>
+            <b>I am too</b>
+            <div id="wtf">
+              <b class="omg">Woot</b>
+              <a href="#" class="baz">Link</a>
+              <i id="uhm">I am excess</i>
+              <b>I am too</b>
+              <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+            </div>
+            <div id="wtf">
+              <b class="omg">Woot</b>
+              <a href="#" class="baz">Link</a>
+              <i id="uhm">I am excess</i>
+              <b>I am too</b>
+              <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+              <div id="wtf">
+                <b class="omg">Woot</b>
+                <a href="#" class="baz">Link</a>
+                <i id="uhm">I am excess</i>
+                <b>I am too</b>
+                <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                <div id="wtf">
+                  <b class="omg">Woot</b>
+                  <a href="#" class="baz">Link</a>
+                  <i id="uhm">I am excess</i>
+                  <b>I am too</b>
+                  <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                  <div id="wtf">
+                    <b class="omg">Woot</b>
+                    <a href="#" class="baz">Link</a>
+                    <i id="uhm">I am excess</i>
+                    <b>I am too</b>
+                    <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                    <div id="wtf">
+                      <b class="omg">Woot</b>
+                      <a href="#" class="baz">Link</a>
+                      <i id="uhm">I am excess</i>
+                      <b>I am too</b>
+                      <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+          </div>
+
+          <span style="background: black"><i>spoiler</i>: Dumbledore dies</span>
+        </div>
+        <!-- -->
+        
+        <script type="text/javascript" src="../../benchmarkjs/benchmark.js"></script>
+        <script src="https://github.com/mootools/slick/raw/d3aef7cb747c127f2dd33a608769678ed4e7f9ef/Source/Slick.Parser.js" type="text/javascript" charset="utf-8"></script>
+        <script src="https://github.com/mootools/slick/raw/d3aef7cb747c127f2dd33a608769678ed4e7f9ef/Source/Slick.Finder.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+          oldSlick = window.Slick;
+          Slick = null;
+        </script>
+        <script src="../../../Source/Slick.Parser.js" type="text/javascript"></script>
+        <script src="../../../Source/Slick.Finder.js" type="text/javascript"></script>
+    		<script src="../setdocument/slow-document.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var suite = new Benchmark.Suite;
+      var suite2 = new Benchmark.Suite;
+      
+      var divs = document.getElementsByTagName("div");
+      var bs = document.getElementsByTagName("b");
+      var is = document.getElementsByTagName("i");
+      
+      window.result = {success: 0, failure: 0}
+        function assert(name, statement) {
+          if (statement) {
+            result.success ++
+            //console.log(name, "PASS");
+          } else {
+            result.failure ++
+            //console.log(name, "FAIL");
+          }
+        }  
+      var root = document.body.parentNode;
+        
+      // add tests
+      suite
+      .add('Old Slick', function() {
+        assert("basic tag",         oldSlick.match(divs[0], "div"));
+        assert("basic tag",         oldSlick.match(bs[0], "b"));
+        assert("basic tag",         oldSlick.match(is[0], "i"));
+        assert("child",             oldSlick.match(bs[0], "div b"));
+        assert("child",             oldSlick.match(bs[1], "div b"));
+        assert("child",             !oldSlick.match(bs[1], "div i"));
+        assert("grandchild",        oldSlick.match(bs[0], "body b"));
+        assert("grandchild",        oldSlick.match(bs[1], "body b"));
+        assert("direct child",      oldSlick.match(bs[0], "div > b"));
+        assert("direct child",      oldSlick.match(divs[0], "body > div"));
+        assert("direct child",      !oldSlick.match(divs[0], "html > div"));
+        assert("direct child",      !oldSlick.match(bs[0], "body > b"));
+        assert("id",                oldSlick.match(divs[0], "div#head"));
+        assert("id",                oldSlick.match(bs[1], "b#bar"));
+        assert("class",             oldSlick.match(divs[0], "div.foo"));
+        assert("class",             oldSlick.match(bs[1], "b.baz"));
+        assert("sibling",           oldSlick.match(bs[1], "i + b"));
+        assert("sibling",           !oldSlick.match(bs[1], "b + b"));
+        assert("cousin",            oldSlick.match(bs[1], "b + i + b"));
+        assert("cousin",            !oldSlick.match(bs[1], "i + b + b"));
+        assert("non-existant bro",  !oldSlick.match(bs[1], "i + i + i + i + i + i + i + i + b + b"));
+      })
+      .add('Current Slick', function() {
+        assert("basic tag",         Slick.match(divs[0], "div"));
+        assert("basic tag",         Slick.match(bs[0], "b"));
+        assert("basic tag",         Slick.match(is[0], "i"));
+        assert("child",             Slick.match(bs[0], "div b"));
+        assert("child",             Slick.match(bs[1], "div b"));
+        assert("child",             !Slick.match(bs[1], "div i"));        
+        assert("grandchild",        Slick.match(bs[0], "body b"));
+        assert("grandchild",        Slick.match(bs[1], "body b"));
+        assert("direct child",      Slick.match(bs[0], "div > b"));
+        assert("direct child",      Slick.match(divs[0], "body > div"));
+        assert("direct child",      !Slick.match(divs[0], "html > div"));
+        assert("direct child",      !Slick.match(bs[0], "body > b"));
+        assert("id",                Slick.match(divs[0], "div#head"));
+        assert("id",                Slick.match(bs[1], "b#bar"));
+        assert("class",             Slick.match(divs[0], "div.foo"));
+        assert("class",             Slick.match(bs[1], "b.baz"));
+        assert("sibling",           Slick.match(bs[1], "i + b"));
+        assert("sibling",           !Slick.match(bs[1], "b + b"));
+        assert("cousin",            Slick.match(bs[1], "b + i + b"));
+        assert("cousin",            !Slick.match(bs[1], "i + b + b"));
+        assert("non-existant bro",  !Slick.match(bs[1], "i + i + i + i + i + i + i + i + b + b"));
+      })
+      // add listeners
+      .on('cycle', function(bench) {
+        console.log(String(bench));
+      })
+      .on('complete', function() {
+        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        suite2.run();
+        console.log('failed tests', result.failure)
+        result.failure = 0;
+      }).run(true);
+      
+      suite2
+      .add('Old Slick (no nativeMatchesSellector)', function() {
+        assert("basic tag",         oldSlick.match(divs[0], "div"));
+        assert("basic tag",         oldSlick.match(bs[0], "b"));
+        assert("basic tag",         oldSlick.match(is[0], "i"));
+        assert("child",             oldSlick.match(bs[0], "div b"));
+        assert("child",             oldSlick.match(bs[1], "div b"));
+        assert("child",             !oldSlick.match(bs[1], "div i"));
+        assert("grandchild",        oldSlick.match(bs[0], "body b"));
+        assert("grandchild",        oldSlick.match(bs[1], "body b"));
+        assert("direct child",      oldSlick.match(bs[0], "div > b"));
+        assert("direct child",      oldSlick.match(divs[0], "body > div"));
+        assert("direct child",      !oldSlick.match(divs[0], "html > div"));
+        assert("direct child",      !oldSlick.match(bs[0], "body > b"));
+        assert("id",                oldSlick.match(divs[0], "div#head"));
+        assert("id",                oldSlick.match(bs[1], "b#bar"));
+        assert("class",             oldSlick.match(divs[0], "div.foo"));
+        assert("class",             oldSlick.match(bs[1], "b.baz"));
+        assert("sibling",           oldSlick.match(bs[1], "i + b"));
+        assert("sibling",           !oldSlick.match(bs[1], "b + b"));
+        assert("cousin",            oldSlick.match(bs[1], "b + i + b"));
+        assert("cousin",            oldSlick.match(bs[1], "b ~ b"));
+        assert("cousin",            oldSlick.match(bs[1], "b ~ i ~ b"));
+        assert("cousin",            !oldSlick.match(bs[1], "i + b + b"));
+        assert("non-existant bro",  !oldSlick.match(bs[1], "i + i + i + i + i + i + i + i + b + b"));
+      })
+      .add('Current Slick (no nativeMatchesSellector)', function() {
+        assert("basic tag",         Slick.match(divs[0], "div"));
+        assert("basic tag",         Slick.match(bs[0], "b"));
+        assert("basic tag",         Slick.match(is[0], "i"));
+        assert("child",             Slick.match(bs[0], "div b"));
+        assert("child",             Slick.match(bs[1], "div b"));
+        assert("child",             !Slick.match(bs[1], "div i"));        
+        assert("grandchild",        Slick.match(bs[0], "body b"));
+        assert("grandchild",        Slick.match(bs[1], "body b"));
+        assert("direct child",      Slick.match(bs[0], "div > b"));
+        assert("direct child",      Slick.match(divs[0], "body > div"));
+        assert("direct child",      !Slick.match(divs[0], "html > div"));
+        assert("direct child",      !Slick.match(bs[0], "body > b"));
+        assert("id",                Slick.match(divs[0], "div#head"));
+        assert("id",                Slick.match(bs[1], "b#bar"));
+        assert("class",             Slick.match(divs[0], "div.foo"));
+        assert("class",             Slick.match(bs[1], "b.baz"));
+        assert("sibling",           Slick.match(bs[1], "i + b"));
+        assert("sibling",           !Slick.match(bs[1], "b + b"));
+        assert("cousin",            Slick.match(bs[1], "b + i + b"));
+        assert("cousin",            Slick.match(bs[1], "b ~ b"));
+        assert("cousin",            Slick.match(bs[1], "b ~ i ~ b"));
+        assert("cousin",            !Slick.match(bs[1], "i + b + b"));
+        assert("non-existant bro",  !Slick.match(bs[1], "i + i + i + i + i + i + i + i + b + b"));
+      })
+      // add listeners
+      .on('cycle', function(bench) {
+        console.log(String(bench));
+      })
+      .on('start', function() {
+        //reset documents
+        oldSlick.search(doc, 'div');
+        Slick.search(doc, 'div');
+        root.webkitMatchesSelector = root.mozMatchesSelector = root.nativeMatchesSelector = null;
+        oldSlick.search(document.body, 'div');
+        Slick.search(document.body, 'div');
+      })
+      .on('complete', function() {
+        console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+        console.log('failed tests', result.failure)
+        result.failure = 0;
+      })
+
+    </script>
+  </body>
+</html>

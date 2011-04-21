@@ -1,6 +1,6 @@
 var Slow = {};
 Slow.Document = function(element) {
-  this.body = element;
+  this.body = this;
   this.document = this.documentElement = this;
 
   this.xml = true;
