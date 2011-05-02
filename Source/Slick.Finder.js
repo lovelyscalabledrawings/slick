@@ -541,11 +541,6 @@ local.pushUID = function(node, tag, id, classes, attributes, pseudos){
 
 var reSingularCombinator = /^\!?[>+^]$/; // "+", ">", "^"
 local.matchNode = function(node, selector, needle){
-  if (!needle && this.isHTMLDocument && this.nativeMatchesSelector){
-  	try {
-  		return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
-  	} catch(matchError) {}
-  }
 	var parsed = this.Slick.parse(selector);
 	if (!parsed) return true;
 
