@@ -67,6 +67,7 @@ local.setDocument = function(document){
 	= features.brokenEmptyAttributeQSA
 	= features.isHTMLDocument
 	= features.nativeMatchesSelector
+	= features.findPseudoElement
 	= false;
 
 	var starSelectsClosed, starSelectsComments,
@@ -234,6 +235,19 @@ local.setDocument = function(document){
 		bRange.setEnd(b, 0);
 		return aRange.compareBoundaryPoints(Range.START_TO_END, bRange);
 	} : null ;
+	
+	// pseudo elements
+	
+	features.getPseudoElementsByName = function(node, name, value) {
+		var value = node[name];
+		if (value) {
+			var length = value.length;
+			if (length == null) return [value];
+			for (var i = 0, element, result = []; element = value[i]; i++) result[i] = element;
+			return result;
+		}
+		return [];
+	}
 
 	root = null;
 
@@ -420,13 +434,13 @@ local.search = function(context, expression, append, first){
 		combinator = 'combinator:' + currentBit.combinator;
 		if (!this[combinator]) continue search;
 
-		tag        = (this.isXMLDocument) ? currentBit.tag : currentBit.tag.toUpperCase();
-		id         = currentBit.id;
-		classList  = currentBit.classList;
-		classes    = currentBit.classes;
+		tag				= (this.isXMLDocument) ? currentBit.tag : currentBit.tag.toUpperCase();
+		id				 = currentBit.id;
+		classList	= currentBit.classList;
+		classes		= currentBit.classes;
 		attributes = currentBit.attributes;
-		pseudos    = currentBit.pseudos;
-		lastBit    = (j === (currentExpression.length - 1));
+		pseudos		= currentBit.pseudos;
+		lastBit		= (j === (currentExpression.length - 1));
 
 		this.bitUniques = {};
 
@@ -541,29 +555,53 @@ local.createNTHPseudo = function(child, sibling, positions, ofType){
 /*</nth-pseudo-selectors>*//*</pseudo-selectors>*/
 
 local.pushArray = function(node, tag, id, classes, attributes, pseudos){
-	if (this.matchSelector(node, tag, id, classes, attributes, pseudos)) this.found.push(node);
+	var matched = this.matchSelector(node, tag, id, classes, attributes, pseudos);
+	if (matched) {
+		if (matched === true) this.found.push(node);
+		else if (matched.push) this.found.push.apply(this.found, matched);
+		return true;
+	}
 };
 
 local.pushUID = function(node, tag, id, classes, attributes, pseudos){
 	var uid = this.getUID(node);
-	if (!this.uniques[uid] && this.matchSelector(node, tag, id, classes, attributes, pseudos)){
-		this.uniques[uid] = true;
-		this.found.push(node);
+	if (!this.uniques[uid]) {
+		var matched = this.matchSelector(node, tag, id, classes, attributes, pseudos);
+		if (matched) {
+			if (matched === true) {
+				this.found.push(node);
+				this.uniques[uid] = true;
+			} else if (matched.push) {
+				for (var i = 0, match; match = matched[i++];) {
+					uid = this.getUID(match);
+					if (this.uniques[uid]) continue;
+					this.uniques[uid] = true;
+					this.found.push(match);
+				}
+			}
+			return true;
+		}
 	}
 };
 
 var reSingularCombinator = /^\!?[>+^]$/; // "+", ">", "^"
 local.matchNode = function(node, selector, needle){
+	if (this.isHTMLDocument && this.nativeMatchesSelector && selector.indexOf){
+		try {
+			return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
+		} catch(matchError) {}
+	}
+
 	var parsed = this.Slick.parse(selector);
 	if (!parsed) return true;
 
 	parsed = parsed.reverse();
 	for (var i = 0, expression, expressions, built, length, multiple; expression = parsed.expressions[i]; i++) {
 		var first = expression[0];
-		if (local.matchSelector(node, (this.isXMLDocument) ? first.tag : first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
-			if ((length = expression.length) == 1) continue;
+		if (this.matchSelector(node, (this.isXMLDocument) ? first.tag : first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
+			if ((length = expression.length) == (1 + !needle)) continue;
 			if (!built) built = {Slick: true, expressions: [], length: 0};
-			built.expressions.push(expressions  = []);
+			built.expressions.push(expressions = []);
 			built.length++;
 			for (var j = 1; j < length; j++) expressions.push(expression[j]);
 			if (!multiple) multiple = !expression[expression.length - 1].combinator.match(reSingularCombinator);
@@ -593,7 +631,7 @@ local.matchSelector = function(node, tag, id, classes, attributes, pseudos){
 
 	if (id && node.getAttribute('id') != id) return false;
 
-	var i, part, cls;
+	var i, part, cls, elements;
 	if (classes) for (i = classes.length; i--;){
 		cls = node.getAttribute('class') || node.className;
 		if (!(cls && classes[i].regexp.test(cls))) return false;
@@ -602,11 +640,21 @@ local.matchSelector = function(node, tag, id, classes, attributes, pseudos){
 		part = attributes[i];
 		if (part.operator ? !part.test(this.getAttribute(node, part.key)) : !this.hasAttribute(node, part.key)) return false;
 	}
-	if (pseudos) for (i = pseudos.length; i--;){
-		part = pseudos[i];
-		if (!this.matchPseudo(node, part.key, part.value)) return false;
+	if (pseudos) for (i = 0; part = pseudos[i++];){
+		switch(part.type) {
+			case 'class':
+				if (!this.matchPseudo(node, part.key, part.value)) return false;			
+				break;
+			case 'element':
+				if (elements) {
+					for (var j = 0, subelements = [], element; element = elements[j++];) 
+						subelements.push.apply(subelements, this.getPseudoElementsByName(element, part.key, part.value));
+					elements = subelements;
+				} else elements = this.getPseudoElementsByName(node, part.key, part.value);
+				if (!elements.length) return false;
+		}
 	}
-	return true;
+	return elements || true;
 };
 
 var combinators = {
@@ -730,7 +778,6 @@ var combinators = {
 			this.push(node, tag, id, classes, attributes, pseudos);
 		}
 	}
-
 };
 
 for (var c in combinators) local['combinator:' + c] = combinators[c];
