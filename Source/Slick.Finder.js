@@ -931,6 +931,24 @@ Slick.lookupAttributeGetter = function(name){
 
 // Slick pseudo accessor
 
+Slick.defineCombinator = function(name, fn){
+	local['combinator:' + name] = function(node, argument){
+		return fn.apply(this, arguments);
+	};
+	return this;
+};
+
+Slick.lookupCombinator = function(name){
+	var combinator = local['combinator:' + name];
+	if (combinator) return function(argument){
+		return combinator.call(this, argument);
+	};
+	return null;
+};
+
+
+// Slick pseudo accessor
+
 Slick.definePseudo = function(name, fn){
 	local['pseudo:' + name] = function(node, argument){
 		return fn.call(node, argument);
