@@ -67,7 +67,6 @@ local.setDocument = function(document){
 	= features.brokenEmptyAttributeQSA
 	= features.isHTMLDocument
 	= features.nativeMatchesSelector
-	= features.findPseudoElement
 	= false;
 
 	var starSelectsClosed, starSelectsComments,
@@ -434,7 +433,7 @@ local.search = function(context, expression, append, first){
 		combinator = 'combinator:' + currentBit.combinator;
 		if (!this[combinator]) continue search;
 
-		tag				= (this.isXMLDocument) ? currentBit.tag : currentBit.tag.toUpperCase();
+		tag				= currentBit.tag;//(this.isXMLDocument) ? currentBit.tag : currentBit.tag.toUpperCase();
 		id				 = currentBit.id;
 		classList	= currentBit.classList;
 		classes		= currentBit.classes;
@@ -555,38 +554,20 @@ local.createNTHPseudo = function(child, sibling, positions, ofType){
 /*</nth-pseudo-selectors>*//*</pseudo-selectors>*/
 
 local.pushArray = function(node, tag, id, classes, attributes, pseudos){
-	var matched = this.matchSelector(node, tag, id, classes, attributes, pseudos);
-	if (matched) {
-		if (matched === true) this.found.push(node);
-		else if (matched.push) this.found.push.apply(this.found, matched);
-		return true;
-	}
+	if (this.matchSelector(node, tag, id, classes, attributes, pseudos)) this.found.push(node);
 };
 
 local.pushUID = function(node, tag, id, classes, attributes, pseudos){
 	var uid = this.getUID(node);
-	if (!this.uniques[uid]) {
-		var matched = this.matchSelector(node, tag, id, classes, attributes, pseudos);
-		if (matched) {
-			if (matched === true) {
-				this.found.push(node);
-				this.uniques[uid] = true;
-			} else if (matched.push) {
-				for (var i = 0, match; match = matched[i++];) {
-					uid = this.getUID(match);
-					if (this.uniques[uid]) continue;
-					this.uniques[uid] = true;
-					this.found.push(match);
-				}
-			}
-			return true;
-		}
+	if (!this.uniques[uid] && this.matchSelector(node, tag, id, classes, attributes, pseudos)){
+		this.uniques[uid] = true;
+		this.found.push(node);
 	}
 };
 
 var reSingularCombinator = /^\!?[>+^]$/; // "+", ">", "^"
 local.matchNode = function(node, selector, needle){
-	if (this.isHTMLDocument && this.nativeMatchesSelector && selector.indexOf){
+	if (!needle && this.isHTMLDocument && this.nativeMatchesSelector && selector.indexOf){
 		try {
 			return this.nativeMatchesSelector.call(node, selector.replace(/\[([^=]+)=\s*([^'"\]]+?)\s*\]/g, '[$1="$2"]'));
 		} catch(matchError) {}
@@ -619,13 +600,15 @@ local.matchPseudo = function(node, name, argument){
 	return (argument) ? argument == attribute : !!attribute;
 };
 
+
+var uppercased = {};
 local.matchSelector = function(node, tag, id, classes, attributes, pseudos){
 	if (tag){
 		var nodeName = (this.isXMLDocument) ? node.nodeName : node.nodeName.toUpperCase();
 		if (tag == '*'){
 			if (nodeName < '@') return false; // Fix for comment nodes and closed nodes
 		} else {
-			if (nodeName != tag) return false;
+			if (nodeName != (uppercased[tag] || (uppercased[tag] = tag.toUpperCase()))) return false;
 		}
 	}
 
@@ -645,16 +628,9 @@ local.matchSelector = function(node, tag, id, classes, attributes, pseudos){
 			case 'class':
 				if (!this.matchPseudo(node, part.key, part.value)) return false;			
 				break;
-			case 'element':
-				if (elements) {
-					for (var j = 0, subelements = [], element; element = elements[j++];) 
-						subelements.push.apply(subelements, this.getPseudoElementsByName(element, part.key, part.value));
-					elements = subelements;
-				} else elements = this.getPseudoElementsByName(node, part.key, part.value);
-				if (!elements.length) return false;
 		}
 	}
-	return elements || true;
+	return true;
 };
 
 var combinators = {
@@ -976,7 +952,7 @@ Slick.lookupAttributeGetter = function(name){
 	return local.attributeGetters[name];
 };
 
-// Slick pseudo accessor
+// Slick combinator accessor
 
 Slick.defineCombinator = function(name, fn){
 	local['combinator:' + name] = function(node, argument){
