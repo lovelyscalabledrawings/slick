@@ -3,6 +3,7 @@
 name: Slick.Parser
 description: Standalone CSS3 Selector parser
 provides: Slick.Parser
+replaces: Core/Slick.Parser
 ...
 */
 
