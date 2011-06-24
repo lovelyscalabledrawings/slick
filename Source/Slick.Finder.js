@@ -941,6 +941,13 @@ Slick.match = function(node, selector){
 	return local.matchNode(node, selector);
 };
 
+
+Slick.matchSelector = function(node, tag, id, classes, attributes, pseudos){
+  if (!node) return false;
+	local.setDocument(node);
+	return local.matchSelector(node, tag, id, classes, attributes, pseudos);
+};
+
 // Slick attribute accessor
 
 Slick.defineAttributeGetter = function(name, fn){
