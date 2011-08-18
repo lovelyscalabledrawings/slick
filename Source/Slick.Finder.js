@@ -234,19 +234,6 @@ local.setDocument = function(document){
 		bRange.setEnd(b, 0);
 		return aRange.compareBoundaryPoints(Range.START_TO_END, bRange);
 	} : null ;
-	
-	// pseudo elements
-	
-	features.getPseudoElementsByName = function(node, name, value) {
-		var value = node[name];
-		if (value) {
-			var length = value.length;
-			if (length == null) return [value];
-			for (var i = 0, element, result = []; element = value[i]; i++) result[i] = element;
-			return result;
-		}
-		return [];
-	}
 
 	root = null;
 
@@ -577,6 +564,7 @@ local.matchNode = function(node, selector, needle){
 	if (!parsed) return true;
 
 	parsed = parsed.reverse();
+	if (!node.parentNode) needle = null;
 	for (var i = 0, expression, expressions, built, length, multiple; expression = parsed.expressions[i]; i++) {
 		var first = expression[0];
 		if (this.matchSelector(node, (this.isXMLDocument) ? first.tag : first.tag.toUpperCase(), first.id, first.classes, first.attributes, first.pseudos)) { // matching first selector against element
@@ -941,6 +929,12 @@ Slick.match = function(node, selector){
 	return local.matchNode(node, selector);
 };
 
+Slick.matchNode = function(node, selector){
+	if (!(node && selector)) return false;
+	if (!selector || selector === node) return true;
+	local.setDocument(node);
+	return local.matchNode.apply(local, arguments);
+};
 
 Slick.matchSelector = function(node, tag, id, classes, attributes, pseudos){
   if (!node) return false;
