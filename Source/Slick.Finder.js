@@ -75,7 +75,7 @@ local.setDocument = function(document){
 
 	var selected, id = 'slick_uniqueid';
 	var testNode = document.createElement('div');
-	
+
 	var testRoot = document.body || document.getElementsByTagName('body')[0] || root;
 	testRoot.appendChild(testNode);
 
@@ -126,7 +126,7 @@ local.setDocument = function(document){
 
 			features.brokenGEBCN = cachedGetElementsByClassName || brokenSecondClassNameGEBCN;
 		}
-		
+
 		if (testNode.querySelectorAll){
 			// IE 8 returns closed nodes (EG:"</foo>") for querySelectorAll('*') for some documents
 			try {
@@ -251,7 +251,6 @@ var reSimpleSelector = /^([#.]?)((?:[\w-]+|\*))$/,
 local.search = function(context, expression, append, first){
 
 	var found = this.found = (first) ? null : (append || []);
-	
 	if (!context) return found;
 	else if (context.navigator) context = context.document; // Convert the node from a window to a document
 	else if (!context.nodeType) return found;
@@ -334,14 +333,11 @@ local.search = function(context, expression, append, first){
 				|| this.brokenMixedCaseQSA
 				|| (this.brokenCheckedQSA && expression.indexOf(':checked') > -1)
 				|| (this.brokenEmptyAttributeQSA && reEmptyAttribute.test(expression))
-				|| (!contextIsDocument && (//Abort when !contextIsDocument and...
+				|| (!contextIsDocument //Abort when !contextIsDocument and...
 					//  there are multiple expressions in the selector
 					//  since we currently only fix non-document rooted QSA for single expression selectors
-					expression.indexOf(',') > -1
-					//  and the expression begins with a + or ~ combinator
-					//  since non-document rooted QSA can't access nodes that aren't descendants of the context
-					|| (/^\s*[~+]/).test(expression)
-				))
+					&& expression.indexOf(',') > -1
+				)
 				|| Slick.disableQSA
 			) break querySelector;
 			var _expression = expression, _context = context;
@@ -642,7 +638,7 @@ var combinators = {
 							this.push(item, tag, null, classes, attributes, pseudos);
 							break;
 						}
-					} 
+					}
 					return;
 				}
 				if (!item){
@@ -850,7 +846,7 @@ var pseudos = {
 	'root': function(node){
 		return (node === this.root);
 	},
-	
+
 	'selected': function(node){
 		return node.selected;
 	}
@@ -862,7 +858,7 @@ for (var p in pseudos) local['pseudo:' + p] = pseudos[p];
 
 // attributes methods
 
-local.attributeGetters = {
+var attributeGetters = local.attributeGetters = {
 
 	'class': function(){
 		return this.getAttribute('class') || this.className;
@@ -879,7 +875,7 @@ local.attributeGetters = {
 	'style': function(){
 		return (this.style) ? this.style.cssText : this.getAttribute('style');
 	},
-	
+
 	'tabindex': function(){
 		var attributeNode = this.getAttributeNode('tabindex');
 		return (attributeNode && attributeNode.specified) ? attributeNode.nodeValue : null;
@@ -887,9 +883,16 @@ local.attributeGetters = {
 
 	'type': function(){
 		return this.getAttribute('type');
+	},
+
+	'maxlength': function(){
+		var attributeNode = this.getAttributeNode('maxLength');
+		return (attributeNode && attributeNode.specified) ? attributeNode.nodeValue : null;
 	}
 
 };
+
+attributeGetters.MAXLENGTH = attributeGetters.maxLength = attributeGetters.maxlength;
 
 // Slick
 
@@ -917,7 +920,13 @@ Slick.contains = function(container, node){
 // Slick attribute getter
 
 Slick.getAttribute = function(node, name){
+	local.setDocument(node);
 	return local.getAttribute(node, name);
+};
+
+Slick.hasAttribute = function(node, name){
+	local.setDocument(node);
+	return local.hasAttribute(node, name);
 };
 
 // Slick matcher
